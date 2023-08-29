@@ -73,9 +73,9 @@ def gcn():
         num_nodes=num_nodes,
         env=environment
     )
-    start_time = time()
+    start_time = time.time()
     gcn.run(10_000)
-    print(f'took {time()-start_time} (s)')
+    print(f'took {time.time()-start_time} (s)')
 
 
 
