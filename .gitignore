@@ -7,3 +7,9 @@ training_data/
 __pycache__
 .git
 .pyc
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/marl-gcn.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/misc.xml

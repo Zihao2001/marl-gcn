@@ -32,8 +32,8 @@ class Env(gym.Env):
 
         # Log dir
         self.save_file: str = save_file
-        # self.test_file: str = save_file[:save_file.index(".csv")]+"_test.csv"
-        # print(self.test_file)
+        self.test_file: str = save_file[:save_file.index(".csv")]+"_test.csv"
+        print(self.test_file)
 
         # Path information
         self.source: int = -1
@@ -55,9 +55,9 @@ class Env(gym.Env):
         f.write("steps,reward\n")
         f.close()
 
-        # f = open(self.test_file, 'w+')
-        # f.write("steps,reward,latency,bandwidth\n")
-        # f.close()
+        f = open(self.test_file, 'w+')
+        f.write("steps,reward,latency,bandwidth\n")
+        f.close()
 
         self.df = pd.DataFrame(
             columns=['steps', 'reward'])
