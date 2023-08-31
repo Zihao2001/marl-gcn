@@ -7,8 +7,8 @@ from models.DQN import *
 import time
 from models.GCN import GCN_Agent, GCN
 from environment.GCN_env import Env
-directory = "training_data"
 
+directory = "training_data"
 
 if not os.path.exists(directory):
     os.makedirs(directory)
@@ -26,7 +26,7 @@ def ma():
     t0 = time.time()
     contn = "yes"
     env = link_hop_env(directory +
-                       "/" + "50Nodes_wax" + ".csv",  G)
+                       "/" + "50Nodes_wax" + ".csv", G)
 
     env.graph = adjust_lat_band(env.graph, flows)
     model = MultiAgent(env)
@@ -51,17 +51,18 @@ def ma():
         retrn = input("retrain?")
 
     t1 = time.time()
-    total = t1-t0
-    print(f"Multi Agent {round(total/60, 2)} mins")
-    
+    total = t1 - t0
+    print(f"Multi Agent {round(total / 60, 2)} mins")
+
+
 def gcn():
     num_nodes = 50
     max_neighbors = 50
 
     environment = Env("training_data/save_file",
-                      num_nodes_in_graph=num_nodes, 
+                      num_nodes_in_graph=num_nodes,
                       max_neighbors=max_neighbors,
-                      graph = G )
+                      graph=G)
 
     policy_net = GCN(num_nodes, max_neighbors).to(device)
     target_net = GCN(num_nodes, max_neighbors).to(device)
@@ -75,14 +76,13 @@ def gcn():
     )
     start_time = time.time()
     gcn.run(10_000)
-    print(f'took {time.time()-start_time} (s)')
-
+    print(f'took {time.time() - start_time} (s)')
 
 
 def spf():
     t0 = time.time()
     env = link_hop_env(directory +
-                       "/" + "spf_150" + ".csv",  G)
+                       "/" + "spf_150" + ".csv", G)
     env.graph = adjust_lat_band(env.graph, flows)
     env.graph.remove_nodes_from(nodes_to_remove)
 
@@ -104,16 +104,15 @@ def spf():
         else:
             bad += 1
     t1 = time.time()
-    total = t1-t0
-    print(f"spf {round(total/60, 2)} mins")
+    total = t1 - t0
+    print(f"spf {round(total / 60, 2)} mins")
     print(f"spf % Routed: {good / float(good + bad)}")
-
 
 
 def ecmp():
     t0 = time.time()
     env = link_hop_env(directory +
-                       "/" + "ecmp_150" + ".csv",    G)
+                       "/" + "ecmp_150" + ".csv", G)
     env.graph.remove_nodes_from(nodes_to_remove)
 
     good = 0
@@ -143,10 +142,9 @@ def ecmp():
             bad += 1
 
     t1 = time.time()
-    total = t1-t0
-    print(f"ecmp {round(total/60, 2)} mins")
+    total = t1 - t0
+    print(f"ecmp {round(total / 60, 2)} mins")
     print(f"ecmp % Routed: {good / float(good + bad)}")
-
 
 
 def genrt_flows(num_flows):
@@ -156,7 +154,7 @@ def genrt_flows(num_flows):
     return flows
 
 
-G = create_graph(50,   100,   "50nodes.brite")
+G = create_graph(50, 100, "50nodes.brite")
 flows = genrt_flows(70)
 nodes_to_remove = []
 ma()
