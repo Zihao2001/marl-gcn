@@ -1,5 +1,5 @@
 import torch.nn.functional as F
-from environment.util import  get_flows, get_new_route, compute_reward, get_max_neighbors, adjust_lat_band
+from environment.util import get_flows, get_new_route, compute_reward, get_max_neighbors, adjust_lat_band
 from helper.graph import get_neighbors
 from gym.spaces import MultiDiscrete, Discrete
 from networkx import barabasi_albert_graph
@@ -13,8 +13,9 @@ from config import device
 from torch_geometric.data import Data
 import numpy as np
 
+
 class Env(gym.Env):
-    # Constructor, create graphs, set some variables for gym, house keeping stuff
+    # Constructor, create graphs, set some variables for gym, housekeeping stuff
     def __init__(self, save_file: str, num_nodes_in_graph: int = 5, max_neighbors=5, graph=None) -> None:
 
         self.graph = graph if graph is not None else self.generate_graph()
@@ -78,7 +79,8 @@ class Env(gym.Env):
                     self.valid_actions[i] = 1
                 else:
                     self.valid_actions[i] = 0
-            return [self.current_node, self.target, self.get_node_data(), self.get_edge_list()], -12345, False, {'valid_actions': self.valid_actions}
+            return [self.current_node, self.target, self.get_node_data(), self.get_edge_list()], -12345, False, {
+                'valid_actions': self.valid_actions}
         self.path.append(next_node)
         self.current_node = next_node
         self.steps += 1
@@ -89,7 +91,8 @@ class Env(gym.Env):
         self.neighbors = list(self.graph.neighbors(self.current_node))
         valid_actions = self.get_valid_actions()
         node_data = self.format_src_tgt(self.current_node, self.target)
-        return Data(x=node_data, edge_index=self.edge_list, edge_attr=self.edge_weights), rewards[0], done, {'valid_actions': valid_actions}
+        return Data(x=node_data, edge_index=self.edge_list, edge_attr=self.edge_weights), rewards[0], done, {
+            'valid_actions': valid_actions}
 
     def get_valid_actions(self):
         valid_actions = torch.zeros(
@@ -148,7 +151,8 @@ class Env(gym.Env):
             self.latency_record = []
         node_data = self.format_src_tgt(self.current_node, self.target)
 
-        return Data(x=node_data, edge_index=self.edge_list, edge_attr=self.edge_weights), {'valid_actions': valid_actions}
+        return Data(x=node_data, edge_index=self.edge_list, edge_attr=self.edge_weights), {
+            'valid_actions': valid_actions}
 
     # not used / doesn't make sense to use given the problem
     def _render(self, mode: str = 'human', close: bool = False) -> None:
@@ -162,17 +166,23 @@ class Env(gym.Env):
         return len(self.graph.nodes)
 
     def generate_graph(self):
+        """
+        Generates a graph with a maximum number of neighbors
+        """
         self.graph = barabasi_albert_graph(self.num_nodes_in_graph, 2)
+        # ensures the generated graph adheres to a maximum neighbors constraint
         while get_max_neighbors(self.graph) > self.max_neighbors:
             self.graph = barabasi_albert_graph(self.num_nodes_in_graph, 2)
-
         self.update_graph_weights()
         return self.graph
 
     def update_graph_weights(self):
-        for e in self.graph.edges():
-            self.graph[e[0]][e[1]]["weight"] = random.uniform(0, 1)
-            self.graph[e[0]][e[1]]["capacity"] = random.uniform(0, 1)
+        """
+        Update the attributes of the graph edges
+        """
+        for source, target in self.graph.edges():
+            self.graph[source][target]["weight"] = random.uniform(0, 1)
+            self.graph[source][target]["capacity"] = random.uniform(0, 1)
         adjust_lat_band(self.graph, get_flows(self.graph, 20))
 
     def get_edge_list(self):
@@ -200,5 +210,3 @@ class Env(gym.Env):
         for node in self.graph.nodes():
             neighbor_dict[node] = nx.neighbors(self.graph, node)
         return neighbor_dict
-
-
