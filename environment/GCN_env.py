@@ -55,9 +55,9 @@ class Env(gym.Env):
         f.write("steps,reward,latency,bandwidth\n")
         f.close()
 
-#         f = open("training_data/step_data.csv", "w+")
-#         f.write("steps,reward\n")
-#         f.close()
+        f = open("training_data/step_data.csv", "w+")
+        f.write("steps,reward\n")
+        f.close()
 
         self.df = pd.DataFrame(
             columns=['steps', 'reward'])
