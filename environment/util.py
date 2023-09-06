@@ -24,74 +24,58 @@ def create_graph(numNodes=100, numEdges=200, fileName="Waxman.brite") -> nx.Grap
     return g
 
 
-# Create a random route in the network
 def get_new_route(graph: nx.Graph) -> Tuple[int, int]:
+    """
+    Generate a random route (source and target nodes) in a given NetworkX graph such that
+    there exists a path between the two nodes.
+    """
     nodes = list(graph.nodes)
     done = False
-    node1 = -1
-    node2 = -1
+    src = -1
+    dst = -1
     while not done:
         try:
-            node1 = choice(nodes)
-            node2 = choice(nodes)
-            while node1 == node2:
-                node2 = choice(nodes)
-            nx.shortest_path(graph, node1, node2)
+            src = choice(nodes)
+            dst = choice(nodes)
+            while src == dst:
+                dst = choice(nodes)
+            nx.shortest_path(graph, src, dst)
             done = True
         except:
             done = False
-    # node1 = 0
-    # node2 = 20
-    return node1, node2
-
-
-# get new route try catch safe. To be used when nodes are removed from network
-
-
-from random import choice
-from typing import Tuple
-import networkx as nx
+    return src, dst
 
 
 def _get_new_route(graph: nx.Graph) -> Tuple[int, int]:
-    """Find a pair of unique nodes in the graph such that a path exists between them."""
-
-    # List all nodes in the graph
+    """
+    Generate a random route (source and target nodes) in a given NetworkX graph such that
+    there exists a path between the two nodes. To be used when nodes are removed from network.
+    """
     nodes = list(graph.nodes)
-
-    # Initialize control flag and node variables
-    route_found = False
-    source_node = None
-    target_node = None
-
-    while not route_found:
+    done = False
+    src = -1
+    dst = -1
+    while not done:
         try:
-            # Randomly select source and target nodes
-            source_node = choice(nodes)
-            target_node = choice(nodes)
-
-            # Ensure the source and target nodes are different
-            while source_node == target_node:
-                target_node = choice(nodes)
-
-            # Check if a path exists between the source and target nodes
-            nx.shortest_path(graph, source_node, target_node)
-
-            # If a path exists, set the control flag to True
-            route_found = True
-
-        except nx.NetworkXNoPath:
-            # Catch the specific 'No Path' exception and continue the loop
-            route_found = False
-
-    return source_node, target_node
+            src = choice(nodes)
+            dst = choice(nodes)
+            while src == dst:
+                dst = choice(nodes)
+            nx.shortest_path(graph, src, dst)
+            done = True
+        except:
+            done = False
+    return src, dst
 
 
 def get_flows(graph: nx.Graph, num_flows: int) -> Tuple[int, int]:
+    """
+    Generate a list of shortest paths in the graph.
+    """
     paths = []
     for i in range(num_flows):
-        s, t = _get_new_route(graph)
-        paths.append(nx.shortest_path(graph, s, t))
+        src, dst = _get_new_route(graph)
+        paths.append(nx.shortest_path(graph, src, dst))
     return paths
 
 
@@ -159,9 +143,10 @@ def compute_reward_GCN(graph: nx.Graph, target: int, path: list) -> Tuple[list, 
         return [-graph[path[-1]][path[-2]]['weight']], False
 
 
-# Return the max number of neighbors in the graph
-
 def get_max_neighbors(graph: nx.Graph) -> int:
+    """
+    Find the maximum number of neighbors that any node has.
+    """
     max_neighbors = 0
     for node in graph.nodes:
         node_neighbors = list(graph.neighbors(node))
