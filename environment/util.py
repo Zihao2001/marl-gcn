@@ -32,18 +32,18 @@ def get_new_route(graph: nx.Graph) -> Tuple[int, int]:
     nodes = list(graph.nodes)
     done = False
     src = -1
-    dst = -1
+    tgt = -1
     while not done:
         try:
             src = choice(nodes)
-            dst = choice(nodes)
-            while src == dst:
-                dst = choice(nodes)
-            nx.shortest_path(graph, src, dst)
+            tgt = choice(nodes)
+            while src == tgt:
+                tgt = choice(nodes)
+            nx.shortest_path(graph, src, tgt)
             done = True
         except:
             done = False
-    return src, dst
+    return src, tgt
 
 
 def _get_new_route(graph: nx.Graph) -> Tuple[int, int]:
@@ -54,18 +54,18 @@ def _get_new_route(graph: nx.Graph) -> Tuple[int, int]:
     nodes = list(graph.nodes)
     done = False
     src = -1
-    dst = -1
+    tgt = -1
     while not done:
         try:
             src = choice(nodes)
-            dst = choice(nodes)
-            while src == dst:
-                dst = choice(nodes)
-            nx.shortest_path(graph, src, dst)
+            tgt = choice(nodes)
+            while src == tgt:
+                tgt = choice(nodes)
+            nx.shortest_path(graph, src, tgt)
             done = True
         except:
             done = False
-    return src, dst
+    return src, tgt
 
 
 def get_flows(graph: nx.Graph, num_flows: int) -> Tuple[int, int]:
@@ -74,8 +74,8 @@ def get_flows(graph: nx.Graph, num_flows: int) -> Tuple[int, int]:
     """
     paths = []
     for i in range(num_flows):
-        src, dst = _get_new_route(graph)
-        paths.append(nx.shortest_path(graph, src, dst))
+        src, tgt = _get_new_route(graph)
+        paths.append(nx.shortest_path(graph, src, tgt))
     return paths
 
 
